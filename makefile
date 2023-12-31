@@ -1,15 +1,14 @@
 #
 # Makefile for UNIX - unrar
 
-# Linux using GCC
+# Mingw
 CXX=c++
-CXXFLAGS=-march=native -O2 -std=c++11 -Wno-logical-op-parentheses -Wno-switch -Wno-dangling-else
-LIBFLAGS=-fPIC
-DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DRAR_SMP
+CXXFLAGS=-march=native -Os
+DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_M_X64
 STRIP=strip
 AR=ar
 LDFLAGS=-pthread
-DESTDIR=/usr
+LIBS=-lPowrProf -lOleAut32 -lOle32 -lwbemuuid
 
 ##########################
 
@@ -25,7 +24,7 @@ OBJECTS=rar.o strlist.o strfn.o pathfn.o smallfn.o global.o file.o filefn.o filc
 	archive.o arcread.o unicode.o system.o crypt.o crc.o rawread.o encname.o \
 	resource.o match.o timefn.o rdwrfn.o consio.o options.o errhnd.o rarvm.o secpassword.o \
 	rijndael.o getbits.o sha1.o sha256.o blake2s.o hash.o extinfo.o extract.o volume.o \
-	list.o find.o unpack.o headers.o threadpool.o rs16.o cmddata.o ui.o
+	list.o find.o unpack.o headers.o threadpool.o rs16.o cmddata.o ui.o isnt.o
 
 .cpp.o:
 	$(COMPILE) -D$(WHAT) -c $<
@@ -37,29 +36,29 @@ install:	install-unrar
 uninstall:	uninstall-unrar
 
 clean:
-	@rm -f *.bak *~
-	@rm -f $(OBJECTS) $(UNRAR_OBJ) $(LIB_OBJ)
-	@rm -f unrar libunrar.*
+	@del *.bak *~
+	@del $(OBJECTS) $(UNRAR_OBJ) $(LIB_OBJ)
+	@del unrar.exe libunrar.*
 
 # We removed 'clean' from dependencies, because it prevented parallel
 # 'make -Jn' builds.
 
 unrar:	$(OBJECTS) $(UNRAR_OBJ)
-	@rm -f unrar
-	$(LINK) -o unrar $(LDFLAGS) $(OBJECTS) $(UNRAR_OBJ) $(LIBS)	
-	$(STRIP) unrar
+	@del unrar.exe
+	$(LINK) -o unrar $(LDFLAGS) $(OBJECTS) $(UNRAR_OBJ) $(LIBS)
+	$(STRIP) unrar.exe
 
 sfx:	WHAT=SFX_MODULE
 sfx:	$(OBJECTS)
-	@rm -f default.sfx
+	@del default.sfx
 	$(LINK) -o default.sfx $(LDFLAGS) $(OBJECTS)
 	$(STRIP) default.sfx
 
 lib:	WHAT=RARDLL
 lib:	CXXFLAGS+=$(LIBFLAGS)
 lib:	$(OBJECTS) $(LIB_OBJ)
-	@rm -f libunrar.*
-	$(LINK) -shared -o libunrar.so $(LDFLAGS) $(OBJECTS) $(LIB_OBJ)
+	@del libunrar.*
+	$(LINK) -shared -o libunrar.dll $(LDFLAGS) $(OBJECTS) $(LIB_OBJ)
 	$(AR) rcs libunrar.a $(OBJECTS) $(LIB_OBJ)
 
 install-unrar:

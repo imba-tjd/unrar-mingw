@@ -1,4 +1,6 @@
+Fork of unrar which adds MinGW support. Do not used for production.
 
+---
                        Portable UnRAR version
 
 

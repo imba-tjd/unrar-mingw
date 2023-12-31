@@ -40,7 +40,7 @@ static bool WMI_IsWindows10()
 
   IWbemServices *pSvc = NULL;
  
-  hres = pLoc->ConnectServer(_bstr_t(L"ROOT\\CIMV2"),NULL,NULL,NULL,NULL,0,0,&pSvc);
+  hres = pLoc->ConnectServer(_bstr_t(L"ROOT\\CIMV2"),NULL,NULL,NULL,0,0,0,&pSvc);
     
   if (FAILED(hres))
   {
@@ -105,4 +105,10 @@ bool IsWindows11OrGreater()
     IsSet=true;
   }
   return IsWin11;
+}
+
+namespace _com_util {
+  BSTR WINAPI ConvertStringToBSTR(char const*) {
+    return nullptr;
+  }
 }
